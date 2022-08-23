@@ -22,8 +22,11 @@ class MainActivity : AppCompatActivity(), CrimeListFragment.Callbacks {
         }
     }
 
-    /* событие клика было передано из CrimeListFragment в MainActivity */
     override fun onCrimeSelected(crimeId: UUID) {
-        Log.d(TAG, "MainActivity.onCrimeSelected: $crimeId")
+        /* Замена CrimeListFragment на CrimeFragment */
+        val fragment = CrimeFragment()
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.fragment_container,fragment).commit()
     }
 }
