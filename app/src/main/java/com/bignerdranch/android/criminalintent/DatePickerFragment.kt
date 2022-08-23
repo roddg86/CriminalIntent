@@ -12,6 +12,11 @@ import java.util.*
 private const val ARG_DATE = "date"
 
 class DatePickerFragment : DialogFragment() {
+    /* Создание интерфейса обратного вызова */
+    interface Callbacks{
+        fun onDateSelected(date: Date)
+    }
+
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val date = arguments?.getSerializable(ARG_DATE) as Date
