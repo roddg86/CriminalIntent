@@ -9,6 +9,7 @@ import android.widget.DatePicker
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.DialogFragment
 import java.util.*
+import java.util.Calendar.*
 
 private const val ARG_DATE = "date"
 
@@ -20,22 +21,26 @@ class DatePickerFragment : DialogFragment() {
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dateListener = DatePickerDialog.OnDateSetListener { _: DatePicker, year: Int,
-                                                                month: Int, day: Int ->
-            val resultDate: Date =
-                GregorianCalendar(year, month, day).time
-
-            targetFragment?.let { fragment ->
-                (fragment as Callbacks).onDateSelected(resultDate)
-            }
-        }
 
         val date = arguments?.getSerializable(ARG_DATE) as Date
-        val calendar = Calendar.getInstance()
+        val calendar = getInstance()
         calendar.time = date
-        val initialYear = calendar.get(Calendar.YEAR)
-        val initialMonth = calendar.get(Calendar.MONTH)
-        val initialDay = calendar.get(Calendar.DAY_OF_MONTH)
+        val calendarHour = calendar.get(HOUR_OF_DAY)
+        val calendarMinute = calendar.get(MINUTE)
+
+        val dateListener =
+            DatePickerDialog.OnDateSetListener { _: DatePicker, year: Int, month: Int, day: Int ->
+                val resultDate: Date =
+                    GregorianCalendar(year, month, day, calendarHour, calendarMinute).time
+
+                targetFragment?.let { fragment ->
+                    (fragment as Callbacks).onDateSelected(resultDate)
+                }
+            }
+
+        val initialYear = calendar.get(YEAR)
+        val initialMonth = calendar.get(MONTH)
+        val initialDay = calendar.get(DAY_OF_MONTH)
 
         return DatePickerDialog(
             requireContext(),
