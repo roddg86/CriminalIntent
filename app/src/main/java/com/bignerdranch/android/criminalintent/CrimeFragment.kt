@@ -99,11 +99,12 @@ class CrimeFragment : Fragment() {
 
         /* Отображение DialogFragment */
         dateButton.setOnClickListener {
-            DatePickerFragment().apply {
+            DatePickerFragment.newInstance(crime.date).apply {
                 show(this@CrimeFragment.requireFragmentManager(), DIALOG_DATE)
             }
         }
     }
+
 
     override fun onStop() {
         super.onStop()
