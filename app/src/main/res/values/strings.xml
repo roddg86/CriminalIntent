@@ -6,4 +6,11 @@
     <string name="crime_solved_label">Решенный</string>
     <string name="crime_suspect_text">Выберите Подозреваемого</string>
     <string name="crime_report_text">Отправить Отчет о Преступлении</string>
+    <string name="crime_report">%1$s!Преступление было раскрыто на %2$s. %3$s, и %4$s</string>
+    <string name="crime_report_solved">Дело раскрыто</string>
+    <string name="crime_report_unsolved">Дело не раскрыто</string>
+    <string name="crime_report_no_suspect">подозреваемого нет.</string>
+    <string name="crime_report_suspect">подозреваемый является %s.</string>
+    <string name="crime_report_subject">Преступный умысел сообщение о преступлении</string>
+    <string name="send_report">Отправить сообщение о преступлении через</string>
 </resources>
