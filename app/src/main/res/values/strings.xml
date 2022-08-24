@@ -4,6 +4,6 @@
     <string name="crime_title_label">Заглавие</string>
     <string name="crime_detail_label">Подробности</string>
     <string name="crime_solved_label">Решенный</string>
-    <string name="crime_suspend_text">Выберите Подозреваемого</string>
+    <string name="crime_suspect_text">Выберите Подозреваемого</string>
     <string name="crime_report_text">Отправить Отчет о Преступлении</string>
 </resources>
