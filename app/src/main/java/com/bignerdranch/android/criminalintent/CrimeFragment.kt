@@ -2,6 +2,8 @@ package com.bignerdranch.android.criminalintent
 
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.pm.ResolveInfo
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -140,6 +142,13 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks, TimePickerFragme
             val pickContactIntent =
                 Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
             setOnClickListener { startActivityForResult(pickContactIntent, REQUEST_CONTACT) }
+            /* кнопка подозреваемого недоступна, фиктивный код */
+            /*pickContactIntent.addCategory(Intent.CATEGORY_HOME)*/
+            val packageManager: PackageManager = requireActivity().packageManager
+            val resolvedActivity: ResolveInfo? = packageManager.resolveActivity(pickContactIntent,PackageManager.MATCH_DEFAULT_ONLY)
+            if(resolvedActivity == null){
+                isEnabled = false
+            }
         }
 
         timeButton.setOnClickListener {
