@@ -1,6 +1,8 @@
 package com.bignerdranch.android.criminalintent
 
+import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.ContactsContract
@@ -135,7 +137,8 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks, TimePickerFragme
 
         /* Интент список контактов из адресной книги */
         suspectButton.apply {
-            val pickContactIntent = Intent(Intent.ACTION_PICK,ContactsContract.Contacts.CONTENT_URI)
+            val pickContactIntent =
+                Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
             setOnClickListener { startActivityForResult(pickContactIntent, REQUEST_CONTACT) }
         }
 
@@ -174,8 +177,44 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks, TimePickerFragme
             isChecked = crime.isSolved
             jumpDrawablesToCurrentState()
         }
-        if(crime.suspect.isNotEmpty()){
+        if (crime.suspect.isNotEmpty()) {
             suspectButton.text = crime.suspect
+        }
+    }
+
+    /* Получение имени контакта */
+    override fun onActivityResult(
+        requestCode:
+        Int, resultCode: Int, data: Intent?
+    ) {
+        when {
+            resultCode != Activity.RESULT_OK -> return
+            requestCode == REQUEST_CONTACT && data != null -> {
+                val contactUri: Uri = data.data ?: return
+    // Указать, для каких полей ваш запрос должен возвращать значения.
+                val queryFields =
+                    arrayOf(ContactsContract.Contacts.DISPLAY_NAME)
+    // Выполняемый здесь запрос — contactUri похож на предложение "where"
+                val cursor = requireActivity().contentResolver
+                        .query(
+                            contactUri,
+                            queryFields, null, null, null
+                        )
+                cursor?.use {
+    // Verify cursor contains at least one result
+                    if (it.count == 0) {
+                        return
+                    }
+    // Первый столбец первой строки данных — это имя вашего подозреваемого.
+                    it.moveToFirst()
+                    val suspect =
+                        it.getString(0)
+                    crime.suspect = suspect
+                    crimeDetailViewModel.saveCrime(crime)
+                    suspectButton.text =
+                        suspect
+                }
+            }
         }
     }
 
