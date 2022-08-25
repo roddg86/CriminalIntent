@@ -206,6 +206,12 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks, TimePickerFragme
         crimeDetailViewModel.saveCrime(crime)
     }
 
+    /* Отзыв разрешений URI */
+    override fun onDetach() {
+        super.onDetach()
+        requireActivity().revokeUriPermission(photoUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+    }
+
     override fun onDateSelected(date: Date) {
         crime.date = date
         updateUI()
@@ -231,26 +237,29 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks, TimePickerFragme
         if (crime.suspect.isNotEmpty()) {
             suspectButton.text = crime.suspect
         }
+        updatePhotoView()
+    }
+
+    private fun updatePhotoView() {
+        if (photoFile.exists()) {
+            val bitmap = getScaledBitmap(photoFile.path, requireActivity())
+            photoView.setImageBitmap(bitmap)
+        } else {
+            photoView.setImageDrawable(null)
+        }
     }
 
     /* Получение имени контакта */
-    override fun onActivityResult(
-        requestCode:
-        Int, resultCode: Int, data: Intent?
-    ) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when {
             resultCode != Activity.RESULT_OK -> return
             requestCode == REQUEST_CONTACT && data != null -> {
                 val contactUri: Uri = data.data ?: return
                 // Указать, для каких полей ваш запрос должен возвращать значения.
-                val queryFields =
-                    arrayOf(ContactsContract.Contacts.DISPLAY_NAME)
+                val queryFields = arrayOf(ContactsContract.Contacts.DISPLAY_NAME)
                 // Выполняемый здесь запрос — contactUri похож на предложение "where"
                 val cursor = requireActivity().contentResolver
-                    .query(
-                        contactUri,
-                        queryFields, null, null, null
-                    )
+                    .query(contactUri, queryFields, null, null, null)
                 cursor?.use {
                     // Verify cursor contains at least one result
                     if (it.count == 0) {
@@ -258,13 +267,18 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks, TimePickerFragme
                     }
                     // Первый столбец первой строки данных — это имя вашего подозреваемого.
                     it.moveToFirst()
-                    val suspect =
-                        it.getString(0)
+                    val suspect = it.getString(0)
                     crime.suspect = suspect
                     crimeDetailViewModel.saveCrime(crime)
-                    suspectButton.text =
-                        suspect
+                    suspectButton.text = suspect
                 }
+            }
+            resultCode == REQUEST_PHOTO -> {
+                requireActivity().revokeUriPermission(
+                    photoUri,
+                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                )
+                updatePhotoView()
             }
         }
     }
